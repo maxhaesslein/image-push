@@ -9,16 +9,25 @@ let signalingServer = null,
 function establishConnection(){
 	signalingServer = new WebSocket('ws://localhost:3000');
 
+	const connectionStatus = document.getElementById('connectionstatus');
+
 	signalingServer.addEventListener( 'error', (event) => {
-		console.warn('error connecting to the server')
+		console.warn('error connecting to the server');
+
+		connectionStatus.textContent = 'connection failed';
 	});
 
 	signalingServer.addEventListener( 'open', (event) => {
-		console.info('connection to the server established')
+		console.info('connection to the server established');
+
+		connectionStatus.textContent = 'connection established';
+
+		startPeerConnection();
 	});
 
 	signalingServer.addEventListener( 'close', (event) => {
-		console.info('connection to the server closed')
+		connectionStatus.textContent = 'connection closed';
+		console.info('connection to the server closed');
 	});
 
 	signalingServer.onmessage = async (message) => {
@@ -36,6 +45,43 @@ function establishConnection(){
 
 }
 
+async function startPeerConnection(){
+
+	peerConnection = new RTCPeerConnection();
+
+	const dataChannelStatus = document.getElementById('datachannelstatus');
+
+	// Create the data channel for sending messages
+	dataChannel = peerConnection.createDataChannel("chat");
+	dataChannel.onopen = () => {
+		console.log("Data channel open");
+		dataChannelStatus.textContent = 'data channel open';
+	}
+	dataChannel.onmessage = (event) => {
+		console.log("Received message:", event.data);
+	}
+
+	// ICE candidate handling
+	peerConnection.onicecandidate = (event) => {
+		if (event.candidate) {
+			signalingServer.send(JSON.stringify({ candidate: event.candidate }));
+		}
+	};
+
+	// Listening for the remote data channel
+	peerConnection.ondatachannel = (event) => {
+		event.channel.onmessage = (e) => {
+			console.log("Received message:", e.data);
+			handleServerMessage(e.data);
+		}
+	};
+
+	// Create an offer if this is the first client
+	const offer = await peerConnection.createOffer();
+	await peerConnection.setLocalDescription(offer);
+	signalingServer.send(JSON.stringify({ offer }));
+
+}
 
 
 // Helper function to check if a message is valid JSON
@@ -69,40 +115,3 @@ function processMessage(data) {
 		peerConnection.addIceCandidate(new RTCIceCandidate(parsedData.candidate));
 	}
 }
-
-const startButton = document.getElementById('startButton');
-startButton.onclick = async () => {
-	peerConnection = new RTCPeerConnection();
-
-	// Create the data channel for sending messages
-	dataChannel = peerConnection.createDataChannel("chat");
-	dataChannel.onopen = () => console.log("Data channel open");
-	dataChannel.onmessage = (event) => console.log("Received message:", event.data);
-
-	// ICE candidate handling
-	peerConnection.onicecandidate = (event) => {
-		if (event.candidate) {
-			signalingServer.send(JSON.stringify({ candidate: event.candidate }));
-		}
-	};
-
-	// Listening for the remote data channel
-	peerConnection.ondatachannel = (event) => {
-		event.channel.onmessage = (e) => {
-			console.log("Received message:", e.data);
-			document.getElementById('messages').value += e.data+"\n";
-		}
-	};
-
-	// Create an offer if this is the first client
-	const offer = await peerConnection.createOffer();
-	await peerConnection.setLocalDescription(offer);
-	signalingServer.send(JSON.stringify({ offer }));
-};
-
-const sendButton = document.getElementById('sendButton');
-sendButton.onclick = () => {
-	if (dataChannel && dataChannel.readyState === "open") {
-		dataChannel.send("Hello, World");
-	}
-};

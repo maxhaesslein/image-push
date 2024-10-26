@@ -1,12 +1,35 @@
 window.addEventListener( 'load', function(){
+
 	establishConnection();
+
+	var reconnectButton = document.getElementById('reconnect');
+	reconnectButton.addEventListener( 'click', () => {
+		reConnect();
+	});
+
 });
 
 let signalingServer = null,
 	peerConnection = null,
 	dataChannel = null;
 
+function reConnect() {
+	
+	console.warn('force reconnect');
+
+	if( signalingServer ) {
+		console.log('  closing connection to server' );
+		signalingServer.close();
+		signalingServer = null;
+	}
+
+	establishConnection();
+}
+
 function establishConnection(){
+
+	console.log( 'establishing new connection to the server' );
+
 	signalingServer = new WebSocket('ws://localhost:3000');
 
 	const connectionStatus = document.getElementById('connectionstatus');
@@ -47,12 +70,57 @@ async function startPeerConnection(){
 
 	peerConnection = new RTCPeerConnection();
 
+	peerConnection.addEventListener( 'connectionstatechange', (event) => {
+		console.log( 'peerConnection state change', event );
+
+		var statusDisplay = document.getElementById('peerconnectionstatus');
+
+		switch( peerConnection.connectionState ) {
+			case "new":
+			case "connecting":
+				statusDisplay.textContent = "Peer Connection: Connecting …";
+			break;
+			case "connected":
+				statusDisplay.textContent = "Peer Connection: Online";
+			break;
+			case "disconnected":
+				statusDisplay.textContent = "Peer Connection: Disconnecting …";
+			break;
+			case "closed":
+				statusDisplay.textContent = "Peer Connection: Offline";
+			break;
+			case "failed":
+				statusDisplay.textContent = "Peer Connection: Error";
+				console.warn( 'startPeerConnection() - error establishing a peer connection', event );
+			break;
+			default:
+				statusDisplay.textContent = "Peer Connection: Unknown";
+			break;
+		}
+
+	});
+	peerConnection.addEventListener( 'icecandidate', (event) => {
+		// ICE candidate handling
+		if( ! event.candidate ) return;
+		
+		console.log('ICE candidate handling', event);
+
+		signalingServer.send( JSON.stringify({ candidate: event.candidate }) );
+	});
+	peerConnection.addEventListener( 'datachannel', (event) => {
+		// Listening for the remote data channel
+		event.channel.addEventListener( 'message', (e) => {
+			console.log( 'Received message:', e.data );
+			handleServerMessage(e.data);
+		});
+	});
+
 	const dataChannelStatus = document.getElementById('datachannelstatus');
 
 	// Create the data channel for sending messages
-	dataChannel = peerConnection.createDataChannel("chat");
+	dataChannel = peerConnection.createDataChannel( 'image-push' );
 	dataChannel.addEventListener( 'open', (event) => {
-		console.log( 'data channel open' );
+		console.info( 'data channel open' );
 		dataChannelStatus.textContent = 'data channel opened';
 	});
 	dataChannel.addEventListener( 'message', (event) => {
@@ -66,24 +134,10 @@ async function startPeerConnection(){
 		dataChannelStatus.textContent = 'data channel closing …';
 	});
 	dataChannel.addEventListener( 'close', (event) => {
-		console.log('data channel closed');
+		console.info('data channel closed');
 		dataChannelStatus.textContent = 'data channel closed';
 	});
 
-	// ICE candidate handling
-	peerConnection.onicecandidate = (event) => {
-		if (event.candidate) {
-			signalingServer.send(JSON.stringify({ candidate: event.candidate }));
-		}
-	};
-
-	// Listening for the remote data channel
-	peerConnection.ondatachannel = (event) => {
-		event.channel.onmessage = (e) => {
-			console.log( 'Received message:', e.data );
-			handleServerMessage(e.data);
-		}
-	};
 
 	// Create an offer if this is the first client
 	const offer = await peerConnection.createOffer();
@@ -93,7 +147,6 @@ async function startPeerConnection(){
 }
 
 
-// Helper function to check if a message is valid JSON
 function isJSON(str) {
 	try {
 		JSON.parse(str);

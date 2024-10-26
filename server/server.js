@@ -11,6 +11,8 @@ server.on('connection', (socket) => {
 	clients.push(socket);
 	console.log( '  now having', clients.length, 'clients' );
 
+	//socket.send( JSON.stringify(clients) );
+
 	socket.on('message', (message) => {
 		//console.log('new message with a length of', message.length);
 		clients.forEach((client) => {

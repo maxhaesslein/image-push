@@ -2,24 +2,22 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>ImagePush</title>
+	<title>ImagePush Presenter</title>
+
+	<script type="text/javascript" src="js/presenter.js" defer></script>
+
 </head>
 <body>
 
 	<ul>
-		<li>signalingServer: <span id="signalingServerStatus"></span></li>
-		<li>iceConnection: <span id="iceConnectionStatus"></span></li>
-		<li>peerConnection: <span id="peerConnectionStatus"></span></li>
-		<li>signalingState: <span id="signalingStateStatus"></span></li>
-		<li>remoteDataChannel: <span id="remoteDataChannelStatus"></span></li>
-		<li>localDataChannel: <span id="localDataChannelStatus"></span></li>
+		<li>WebSocket: <span id="webSocketStatus">…</span></li>
 	</ul>
+
+	<div id="peerConnections"></div>
 
 	<p>
 		<button id="sendButton">Send "Hello World"</button>
 	</p>
 
-	<script type="text/javascript" src="js/presenter.js" defer></script>
-	<script type="text/javascript" src="js/connection.js" defer></script>
 </body>
 </html>

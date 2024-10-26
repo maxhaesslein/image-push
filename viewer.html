@@ -2,24 +2,24 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>ImagePush</title>
+	<title>ImagePush Viewer</title>
+
+	<script type="text/javascript" src="js/viewer.js" defer></script>
+
 </head>
 <body>
 	
 	<ul>
-		<li>signalingServer: <span id="signalingServerStatus"></span></li>
-		<li>iceConnection: <span id="iceConnectionStatus"></span></li>
-		<li>peerConnection: <span id="peerConnectionStatus"></span></li>
-		<li>signalingState: <span id="signalingStateStatus"></span></li>
-		<li>remoteDataChannel: <span id="remoteDataChannelStatus"></span></li>
-		<li>localDataChannel: <span id="localDataChannelStatus"></span></li>
+		<li>ViewerID: <span id="viewerIdStatus">…</span></li>
+		<li>WebSocket: <span id="webSocketStatus">…</span></li>
+		<li>PeerConnection: <span id="peerConnectionStatus">…</span></li>
+		<li>ICEConnection: <span id="iceConnectionStatus">…</span></li>
+		<li>DataChannel: <span id="dataChannelStatus">…</span></li>
 	</ul>
 
 	<p>
 		<textarea id="messages" rows="20" cols="33" readonly></textarea>
 	</p>
 
-	<script type="text/javascript" src="js/viewer.js" defer></script>
-	<script type="text/javascript" src="js/connection.js" defer></script>
 </body>
 </html>

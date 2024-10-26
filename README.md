@@ -20,4 +20,4 @@ node server.js
 
 # Client
 
-open the URL in two different browsers; in one, select `Presenter`, in the other select `Viewer`.
+first, open the `presenter.html` in a browser, then open the `viewer.html` in one or more browsers.

@@ -11,16 +11,16 @@
 	</p>
 	
 	<ul>
-		<li id="connectionstatus">connecting …</li>
-		<li id="peerconnectionstatus">waiting for peer connection …</li>
-		<li id="datachannelstatus">waiting for data channel …</li>
+		<li>signalingServer: <span id="signalingServerStatus">connecting …</span></li>
+		<li>peerConnection: <span id="peerConnectionStatus">waiting …</span></li>
+		<li>dataChannel: <span id="dataChannelStatus">waiting …</span></li>
 	</ul>
 
 	<p>
-		<button id="sendButton">Send "Hello, World"</button>
+		<button id="sendButton">Send "Hello World"</button>
 	</p>
 
-	<script type="text/javascript" src="js/connection.js" defer></script>
 	<script type="text/javascript" src="js/presenter.js" defer></script>
+	<script type="text/javascript" src="js/connection.js" defer></script>
 </body>
 </html>

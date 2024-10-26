@@ -4,28 +4,6 @@ let signalingServer = null,
 	peerConnection = null,
 	dataChannel = null;
 
-function shutdown() {
-
-	if( dataChannel ) {
-		console.log( '  closing data channel' );
-		dataChannel = null;
-	}
-
-	if( peerConnection ) {
-		console.log('  closing peer connection' );
-		document.getElementById('peerConnectionStatus').textContent = 'closed';
-		peerConnection.close();
-		peerConnection = null;
-	}
-
-	if( signalingServer ) {
-		console.log('  closing connection to server' );
-		signalingServer.close();
-		signalingServer = null;
-	}
-
-}
-
 function establishConnection(){
 
 	console.log( 'establishing new connection to the server' );
@@ -40,30 +18,29 @@ function establishConnection(){
 	});
 
 	signalingServer.addEventListener( 'open', (event) => {
-		console.info( 'signalingServer: connection to the server established' );
+		console.log( 'signalingServer: connection to the server established' );
 		signalingServerStatusDisplay.textContent = 'connected';
 
 		startPeerConnection();
 	});
 
 	signalingServer.addEventListener( 'close', (event) => {
-		console.info( 'signalingServer: connection to the server closed' );
+		console.log( 'signalingServer: connection to the server closed' );
 		signalingServerStatusDisplay.textContent = 'closed';
-		shutdown();
 	});
 
-	signalingServer.onmessage = async (message) => {
-
+	signalingServer.addEventListener( 'message', async (message) => {
 		if( message.data instanceof Blob ) {
 			// Convert Blob to text
 			message.data.text().then((text) => {
+				console.log('signalingServer: message received (blob)');
 				processSignalingServerMessage(text);
 			});
 		} else {
+			console.log('signalingServer: message received (plain)');
 			processSignalingServerMessage(message.data);
 		}
-
-	};
+	});
 
 }
 
@@ -98,12 +75,12 @@ async function startPeerConnection(){
 			break;
 		}
 
+		document.getElementById('signalingStateStatus').textContent = peerConnection.signalingState;
+
 	});
 	peerConnection.addEventListener( 'icecandidate', (event) => {
+		console.log('peerConnection: icecandidate');
 		if( ! event.candidate ) return;
-		
-		console.log('ICE candidate handling');
-
 		signalingServer.send( JSON.stringify({ candidate: event.candidate }) );
 	});
 	peerConnection.addEventListener( 'datachannel', (event) => {
@@ -134,6 +111,20 @@ async function startPeerConnection(){
 		});
 
 	});
+	peerConnection.addEventListener( 'icecandidateerror', (event) => {
+		console.warn('peerConnection: icecandidateerror', event);
+	});
+	peerConnection.addEventListener( 'iceconnectionstatechange', (event) => {
+		console.log('peerConnection: iceconnectionstatechange', event);
+		console.log('  peerConnection iceConnectionState', peerConnection.iceConnectionState);
+		document.getElementById('iceConnectionStatus').textContent = peerConnection.iceConnectionState;
+	});
+	peerConnection.addEventListener( 'icegatheringstatechange', (event) => {
+		console.info('peerConnection: icegatheringstatechange', event);
+	});
+	peerConnection.addEventListener( 'negotiationneeded', (event) => {
+		console.warn('peerConnection: negotiationneeded', event);
+	});
 
 
 	const localDataChannelStatusDisplay = document.getElementById('localDataChannelStatus');
@@ -141,7 +132,7 @@ async function startPeerConnection(){
 	// Create the data channel for sending messages
 	dataChannel = peerConnection.createDataChannel( 'image-push' );
 	dataChannel.addEventListener( 'open', (event) => {
-		console.info( 'local data channel open' );
+		console.log( 'local data channel open' );
 		localDataChannelStatusDisplay.textContent = 'opened';
 	});
 	dataChannel.addEventListener( 'message', (event) => {
@@ -156,7 +147,7 @@ async function startPeerConnection(){
 		localDataChannelStatusDisplay.textContent = 'closing …';
 	});
 	dataChannel.addEventListener( 'close', (event) => {
-		console.info('local data channel closed');
+		console.log('local data channel closed');
 		localDataChannelStatusDisplay.textContent = 'closed';
 	});
 
@@ -168,23 +159,23 @@ async function startPeerConnection(){
 
 }
 
-function processSignalingServerMessage(data) {
+function processSignalingServerMessage(message) {
 
-	console.log( 'processSignalingServerMessage() - received message' );
+	console.log('  process signalingServer message', message)
 
-	const parsedData = JSON.parse(data);
+	const parsedData = JSON.parse(message);
 
 	if( parsedData.offer ) {
-		console.log( '  message is an offer' );
+		console.log( '    message is an offer', parsedData.offer );
 		peerConnection.setRemoteDescription(new RTCSessionDescription(parsedData.offer))
 			.then(() => peerConnection.createAnswer())
 			.then(answer => peerConnection.setLocalDescription(answer))
 			.then(() => signalingServer.send(JSON.stringify({ answer: peerConnection.localDescription })));
 	} else if( parsedData.answer ) {
-		console.log( '  message is an answer' );
+		console.log( '    message is an answer', parsedData.answer );
 		peerConnection.setRemoteDescription(new RTCSessionDescription(parsedData.answer));
 	} else if( parsedData.candidate ) {
-		console.log( '  message is a candidate' );
+		console.log( '    message is a candidate' );
 		peerConnection.addIceCandidate(new RTCIceCandidate(parsedData.candidate));
 	}
 }

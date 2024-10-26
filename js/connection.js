@@ -22,6 +22,11 @@ function reConnect() {
 
 function shutdown() {
 
+	if( dataChannel ) {
+		console.log( '  closing data channel' );
+		dataChannel = null;
+	}
+
 	if( peerConnection ) {
 		console.log('  closing peer connection' );
 		document.getElementById('peerConnectionStatus').textContent = 'closed';
@@ -65,7 +70,7 @@ function establishConnection(){
 
 	signalingServer.onmessage = async (message) => {
 
-		if (message.data instanceof Blob) {
+		if( message.data instanceof Blob ) {
 			// Convert Blob to text
 			message.data.text().then((text) => {
 				processSignalingServerMessage(text);
@@ -81,7 +86,7 @@ function establishConnection(){
 async function startPeerConnection(){
 
 	peerConnection = new RTCPeerConnection();
-	
+
 	peerConnection.addEventListener( 'connectionstatechange', (event) => {
 
 		const peerConnectionStatusDisplay = document.getElementById('peerConnectionStatus');
@@ -118,10 +123,59 @@ async function startPeerConnection(){
 		signalingServer.send( JSON.stringify({ candidate: event.candidate }) );
 	});
 	peerConnection.addEventListener( 'datachannel', (event) => {
-		handleRemoteDataChannel(event);
+		
+		const remoteDataChannel = event.channel;
+
+		const remoteDataChannelStatusDisplay = document.getElementById( 'remoteDataChannelStatus' );
+
+		remoteDataChannel.addEventListener( 'open', (e) => {
+			console.log( 'remote data channel opened' );
+			remoteDataChannelStatusDisplay.textContent = 'opened';
+		});
+		remoteDataChannel.addEventListener( 'message', (e) => {
+			console.log( 'remote data channel received a message:', e.data );
+			document.getElementById('messages').value += e.data+"\n";
+		});
+		remoteDataChannel.addEventListener( 'error', (e) => {
+			console.warn( 'remote data channel error', e.data );
+			remoteDataChannelStatusDisplay.textContent = 'error';
+		});
+		remoteDataChannel.addEventListener( 'closing', (e) => {
+			console.log( 'remote data channel closing' );
+			remoteDataChannelStatusDisplay.textContent = 'closing …';
+		});
+		remoteDataChannel.addEventListener( 'close', (e) => {
+			console.log( 'remote data channel closed' );
+			remoteDataChannelStatusDisplay.textContent = 'closed';
+		});
+
 	});
 
-	addDataChannel();
+
+	const localDataChannelStatusDisplay = document.getElementById('localDataChannelStatus');
+
+	// Create the data channel for sending messages
+	dataChannel = peerConnection.createDataChannel( 'image-push' );
+	dataChannel.addEventListener( 'open', (event) => {
+		console.info( 'local data channel open' );
+		localDataChannelStatusDisplay.textContent = 'opened';
+	});
+	dataChannel.addEventListener( 'message', (event) => {
+		console.log( 'local data channel received message:', event.data );
+	});
+	dataChannel.addEventListener( 'error', (event) => {
+		console.warn( 'local data channel error', event );
+		localDataChannelStatusDisplay.textContent = 'error';
+	});
+	dataChannel.addEventListener( 'closing', (event) => {
+		console.log('local data channel closing …');
+		localDataChannelStatusDisplay.textContent = 'closing …';
+	});
+	dataChannel.addEventListener( 'close', (event) => {
+		console.info('local data channel closed');
+		localDataChannelStatusDisplay.textContent = 'closed';
+	});
+
 
 	// Create an offer if this is the first client
 	const offer = await peerConnection.createOffer();

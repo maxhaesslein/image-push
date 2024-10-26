@@ -4,6 +4,8 @@ work in progress.
 
 # server
 
+cd into the `server/` subfolder
+
 install the dependencies via:
 
 ```bash

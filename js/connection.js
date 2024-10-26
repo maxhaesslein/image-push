@@ -1,24 +1,8 @@
-window.addEventListener( 'load', function(){
-
-	establishConnection();
-
-	const reconnectButton = document.getElementById('reconnect');
-	reconnectButton.addEventListener( 'click', () => {
-		reConnect();
-	});
-
-});
+window.addEventListener( 'load', establishConnection );
 
 let signalingServer = null,
 	peerConnection = null,
 	dataChannel = null;
-
-function reConnect() {
-	console.warn('force reconnect');
-	shutdown();
-
-	setTimeout( establishConnection, 500 );
-}
 
 function shutdown() {
 

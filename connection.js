@@ -12,14 +12,12 @@ function establishConnection(){
 	const connectionStatus = document.getElementById('connectionstatus');
 
 	signalingServer.addEventListener( 'error', (event) => {
-		console.warn('error connecting to the server');
-
+		console.warn( 'error connecting to the server' );
 		connectionStatus.textContent = 'connection failed';
 	});
 
 	signalingServer.addEventListener( 'open', (event) => {
-		console.info('connection to the server established');
-
+		console.info( 'connection to the server established' );
 		connectionStatus.textContent = 'connection established';
 
 		startPeerConnection();
@@ -27,7 +25,7 @@ function establishConnection(){
 
 	signalingServer.addEventListener( 'close', (event) => {
 		connectionStatus.textContent = 'connection closed';
-		console.info('connection to the server closed');
+		console.info( 'connection to the server closed' );
 	});
 
 	signalingServer.onmessage = async (message) => {
@@ -53,13 +51,24 @@ async function startPeerConnection(){
 
 	// Create the data channel for sending messages
 	dataChannel = peerConnection.createDataChannel("chat");
-	dataChannel.onopen = () => {
-		console.log("Data channel open");
-		dataChannelStatus.textContent = 'data channel open';
-	}
-	dataChannel.onmessage = (event) => {
-		console.log("Received message:", event.data);
-	}
+	dataChannel.addEventListener( 'open', (event) => {
+		console.log( 'data channel open' );
+		dataChannelStatus.textContent = 'data channel opened';
+	});
+	dataChannel.addEventListener( 'message', (event) => {
+		console.log( 'data channel received message:', event.data );
+	});
+	dataChannel.addEventListener( 'error', (event) => {
+		console.warn( 'data channel error', event );
+	});
+	dataChannel.addEventListener( 'closing', (event) => {
+		console.log('data channel closing …');
+		dataChannelStatus.textContent = 'data channel closing …';
+	});
+	dataChannel.addEventListener( 'close', (event) => {
+		console.log('data channel closed');
+		dataChannelStatus.textContent = 'data channel closed';
+	});
 
 	// ICE candidate handling
 	peerConnection.onicecandidate = (event) => {
@@ -71,7 +80,7 @@ async function startPeerConnection(){
 	// Listening for the remote data channel
 	peerConnection.ondatachannel = (event) => {
 		event.channel.onmessage = (e) => {
-			console.log("Received message:", e.data);
+			console.log( 'Received message:', e.data );
 			handleServerMessage(e.data);
 		}
 	};
@@ -95,10 +104,10 @@ function isJSON(str) {
 }
 
 function processMessage(data) {
-	console.log("Received message:", data);
+	console.log( 'processMessage() - received message:', data );
 
 	if (!isJSON(data)) {
-		console.warn("Non-JSON message received:", data);
+		console.warn( 'Non-JSON message received:', data );
 		return;
 	}
 

@@ -2,7 +2,7 @@ Drag images into a browser window to view them remotely
 
 work in progress.
 
-# server
+# Server
 
 cd into the `server/` subfolder
 
@@ -18,6 +18,6 @@ then start the server via:
 node server.js
 ```
 
-# client
+# Client
 
-open the URL in two different browsers.
+open the URL in two different browsers; in one, select `Presenter`, in the other select `Viewer`.

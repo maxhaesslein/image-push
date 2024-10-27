@@ -1,0 +1,12 @@
+
+- [ ] drag&drop images into the presenter
+- [ ] keep all images in a gallery-list
+- [ ] remove images from gallery
+- [ ] send images from gallery to clients
+- [ ] add version number to js/css files
+- [ ] define server address and port in a config file
+- [ ] automatically resize images before sending to a resolution thats perfect for the client
+- [ ] do we want to use ws:// for the address? wss://?
+- [ ] keep images in local storage / session storage ?
+- [ ] automatically connect to clients when reloading the presenter
+- [ ] add some sort of session management with an id that viewers need to enter to connect to the correct presenter

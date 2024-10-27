@@ -3,11 +3,12 @@
 - [x] keep all images in a gallery-list
 - [x] send images from gallery to clients
 - [ ] remove images from gallery
+- [ ] automatically resize images before sending to a resolution thats perfect for the client
+- [ ] only allow jpg ? or automatically convert to jpg ?
 - [ ] add version number to js/css files
 - [ ] define server address and port in a config file
-- [ ] only allow jpg ? or automatically convert to jpg ?
-- [ ] automatically resize images before sending to a resolution thats perfect for the client
 - [ ] do we want to use ws:// for the address? wss://?
 - [ ] keep images in local storage / session storage ?
 - [ ] automatically connect to clients when reloading the presenter
+- [ ] automatically reconnect when connection to websocket is lost
 - [ ] add some sort of session management with an id that viewers need to enter to connect to the correct presenter

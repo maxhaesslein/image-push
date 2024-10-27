@@ -4,7 +4,9 @@
 	<meta charset="UTF-8">
 	<title>ImagePush Presenter</title>
 
+	<link rel="stylesheet" href="assets/css/variables.css" type="text/css" media="all">
 	<link rel="stylesheet" href="assets/css/presenter.css" type="text/css" media="all">
+
 	<script type="text/javascript" src="assets/js/presenter.js" defer></script>
 
 </head>
@@ -14,17 +16,14 @@
 		<li>WebSocket: <span id="webSocketStatus">…</span></li>
 	</ul>
 
-	<div id="peerConnections"></div>
-
-	<p>
-		<button id="sendButton">Send "Hello World"</button>
-	</p>
+	<div id="peerConnections" class="peer-connections"></div>
 
 	<div id="drop-area" class="drop-area">
 		<p>Drag one or more images here to add them to the gallery</p>
 	</div>
 
 	<ul id="gallery" class="gallery">
+		<li id="no-image" class="active no-image">(no image)</li>
 	</ul>
 
 </body>

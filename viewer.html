@@ -4,13 +4,15 @@
 	<meta charset="UTF-8">
 	<title>ImagePush Viewer</title>
 
+	<link rel="stylesheet" href="assets/css/variables.css" type="text/css" media="all">
 	<link rel="stylesheet" href="assets/css/viewer.css" type="text/css" media="all">
+
 	<script type="text/javascript" src="assets/js/viewer.js" defer></script>
 
 </head>
 <body>
 	
-	<ul>
+	<ul class="debug-info">
 		<li>ViewerID: <span id="viewerIdStatus">…</span></li>
 		<li>WebSocket: <span id="webSocketStatus">…</span></li>
 		<li>PeerConnection: <span id="peerConnectionStatus">…</span></li>
@@ -18,9 +20,10 @@
 		<li>DataChannel: <span id="dataChannelStatus">…</span></li>
 	</ul>
 
-	<p>
-		<textarea id="messages" rows="20" cols="33" readonly></textarea>
-	</p>
+	<div id="view-zone" class="view-zone">
+		<span id="no-content" class="no-content">- nothing to display -</span>
+		<div id="view-zone-content" class="view-zone-content"></div>
+	</div>
 
 </body>
 </html>

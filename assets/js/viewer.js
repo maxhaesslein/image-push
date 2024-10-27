@@ -158,8 +158,8 @@ async function peerConnectionSetup(){
 			dataChannelStatusDisplay.textContent = 'opened';
 		});
 		remoteDataChannel.addEventListener( 'message', (e) => {
-			console.log( 'remote data channel received a message:', e.data );
-			document.getElementById('messages').value += e.data+"\n";
+			console.log( 'remote data channel received a message' );
+			handleMessage( e.data );
 		});
 		remoteDataChannel.addEventListener( 'error', (e) => {
 			console.warn( 'remote data channel error', e.data );
@@ -183,3 +183,36 @@ async function peerConnectionSetup(){
 
 }
 
+
+function handleMessage( message ) {
+
+	message = JSON.parse(message);
+
+	const viewZone = document.getElementById('view-zone'),
+		contentArea = viewZone.querySelector('#view-zone-content'),
+		noContentMessage = viewZone.querySelector('#no-content');
+
+	contentArea.innerHTML = '';
+
+	if( message.type == 'clear' ) {
+
+		noContentMessage.classList.remove('hidden');
+
+	} else if( message.type == 'image' ) {
+
+		noContentMessage.classList.add('hidden');
+
+		const image = document.createElement('img');
+		image.addEventListener('load', () => {
+			contentArea.appendChild(image);
+		});
+		image.src = message.data;
+
+
+	} else {
+		console.warn('unknown message type', message.type);
+		console.log(message);
+		return;
+	}
+
+}

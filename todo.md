@@ -1,10 +1,11 @@
 
 - [x] drag&drop images into the presenter
 - [x] keep all images in a gallery-list
+- [x] send images from gallery to clients
 - [ ] remove images from gallery
-- [ ] send images from gallery to clients
 - [ ] add version number to js/css files
 - [ ] define server address and port in a config file
+- [ ] only allow jpg ? or automatically convert to jpg ?
 - [ ] automatically resize images before sending to a resolution thats perfect for the client
 - [ ] do we want to use ws:// for the address? wss://?
 - [ ] keep images in local storage / session storage ?

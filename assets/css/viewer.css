@@ -1,0 +1,55 @@
+.debug-info {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	display: block;
+	font-size: 0.8em;
+	color: var(--color-grey);
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	padding: 5px;
+	z-index: 5;
+}
+
+	.debug-info li {
+		display: inline-block;
+	}
+	
+		.debug-info li + li {
+			margin-left: 1em;
+		}
+
+.view-zone {
+	--padding: 40px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 2;
+	padding: var(--padding);
+	box-sizing: border-box;
+}
+
+	.view-zone img {
+		display: block;
+		max-width: calc(100vw - var(--padding) * 2);
+		max-height: calc(100vh - var(--padding) * 2);
+		width: auto;
+		height: auto;
+	}
+
+	.view-zone .no-content {
+		color: var(--color-grey);
+	}
+
+		.view-zone .no-content.hidden {
+			display: none;
+		}

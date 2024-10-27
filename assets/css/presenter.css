@@ -1,9 +1,13 @@
-
-:root {
-	--color-grey: #999;
-	--color-highlight: #009;
+.peer-connections {
+	font-size: 0.8em;
+	color: var(--color-grey);
 }
 
+	.peer-connections ul {
+		list-style-type: none;
+		margin: 0 20px 20px;
+		padding: 0;
+	}
 
 .drop-area {
 	border: 4px dashed var(--color-grey);
@@ -25,7 +29,7 @@
 	padding: 0;
 	display: flex;
 	justify-content: flex-start;
-	align-items: flex-start;
+	align-items: stretch;
 	flex-wrap: wrap;
 	gap: 20px;
 }
@@ -35,7 +39,27 @@
 		border: 2px solid var(--color-grey);
 		padding: 10px;
 		border-radius: 10px;
+		cursor: pointer;
 	}
+
+		.gallery li:hover {
+			background: var(--color-grey-light);
+		}
+
+		.gallery li.active {
+			border-color: var(--color-highlight);
+			background: var(--color-grey-light);
+		}
+
+		.gallery li.no-image {
+			width: 200px;
+			min-height: 200px;
+			text-align: center;
+			color: var(--color-grey);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
 		.gallery img {
 			display: block;

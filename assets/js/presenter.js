@@ -11,31 +11,6 @@ const peerConnectionsDisplay = document.getElementById('peerConnections');
 
 
 
-window.addEventListener( 'load', sendButtonSetup );
-
-function sendButtonSetup(){
-
-	const sendButton = document.getElementById('sendButton');
-	sendButton.addEventListener( 'click', () => {
-
-		for( const [viewerId, viewer] of Object.entries(peerConnections) ) {
-
-			console.log('sending message to', viewerId);
-
-			dataChannel = viewer.dataChannel;
-
-			if( ! dataChannel || dataChannel.readyState !== "open" ) continue;
-
-			dataChannel.send("Hello World");
-
-		}
-
-	});
-
-}
-
-
-
 window.addEventListener( 'load', webSocketSetup );
 
 function webSocketSetup(){
@@ -128,6 +103,11 @@ function newPeerConnection( viewerId ) {
 	dataChannelDisplay.textContent = 'DataChannel: …';
 	dataChannelDisplay.classList.add('dataChannelDisplay');
 	display.appendChild(dataChannelDisplay);
+
+	const screenDisplay = document.createElement('li');
+	screenDisplay.textContent = 'Showing: - nothing -';
+	screenDisplay.classList.add('screenDisplay');
+	display.appendChild(screenDisplay);
 
 
 	peerConnectionsDisplay.appendChild(display);
@@ -304,6 +284,8 @@ var dropArea = {
 
 		});
 
+		document.getElementById('gallery').querySelector('li.no-image').addEventListener( 'click', dropArea.send );
+
 	},
 
 	drop: ( file ) => {
@@ -311,6 +293,9 @@ var dropArea = {
 		if( ! file.type.startsWith("image/") ) return;
 
 		const container = document.createElement('li');
+
+		const id = 'image-'+Date.now().toString(36) + Math.random().toString(36).substr(2);
+		container.id = id;
 
 		const img = document.createElement("img");
 		img.file = file;
@@ -320,7 +305,10 @@ var dropArea = {
 		title.textContent = file.name;		
 		container.appendChild(title);
 		
+		container.addEventListener( 'click', dropArea.send );
+		
 		document.getElementById('gallery').appendChild(container);
+
 
 		const reader = new FileReader();
 		reader.onload = (e) => {
@@ -329,7 +317,67 @@ var dropArea = {
 		reader.readAsDataURL(file);
 
 
+	},
+
+	send: (e) => {
+
+		const item = e.target.closest('li');
+
+		if( ! item ) return;
+
+		const gallery = document.getElementById('gallery');
+
+		for( const active of gallery.querySelectorAll('li.active') ) {
+			active.classList.remove('active');
+		}
+
+		item.classList.add('active');
+
+		if( item.id == 'no-image' ) {
+			sendMessage({
+				type: 'clear',
+				title: '- nothing -'
+			});
+			return;
+		}
+
+		const imageId = item.id;
+		const image = item.querySelector('img');
+		const title = item.querySelector('span').textContent;
+
+		sendMessage({
+			type: 'image',
+			id: imageId,
+			title: title,
+			data: image.src
+		});
+
 	}
 
 };
 window.addEventListener( 'load', dropArea.setup );
+
+
+function sendMessage( message ) {
+
+	for( const [viewerId, viewer] of Object.entries(peerConnections) ) {
+
+		console.log('sending message to', viewerId);
+
+		dataChannel = viewer.dataChannel;
+
+		if( ! dataChannel || dataChannel.readyState !== "open" ) continue;
+
+		dataChannel.send(JSON.stringify(message));
+
+		let title = '??';
+		if( message.title ) {
+			title = message.title;
+		}
+		
+		viewer.display.querySelector('.screenDisplay').textContent = 'showing: '+title;
+
+	}
+
+}
+

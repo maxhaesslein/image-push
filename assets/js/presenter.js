@@ -10,6 +10,7 @@ let webSocketConnection = null,
 const peerConnectionsDisplay = document.getElementById('peerConnections');
 
 
+
 window.addEventListener( 'load', sendButtonSetup );
 
 function sendButtonSetup(){
@@ -34,8 +35,8 @@ function sendButtonSetup(){
 }
 
 
-window.addEventListener( 'load', webSocketSetup );
 
+window.addEventListener( 'load', webSocketSetup );
 
 function webSocketSetup(){
 
@@ -254,3 +255,81 @@ async function peerConnectionSetup( viewerId ){
 	}));
 
 }
+
+
+
+var dropArea = {
+
+	setup: () => {
+
+		const area = document.getElementById('drop-area');
+
+		if( ! area ) return;
+
+		area.addEventListener( 'dragover', (e) => {
+			area.classList.add('active');
+			e.preventDefault();
+		});
+		window.addEventListener( 'mouseout', (e) => {
+			area.classList.remove('active');
+		});
+		area.addEventListener( 'mouseout', (e) => {
+			area.classList.remove('active');
+		});
+
+		area.addEventListener( 'drop', (e) => {
+			
+			e.preventDefault();
+
+			if( e.dataTransfer.items ) {
+
+				// Use DataTransferItemList interface to access the file(s)
+				[...e.dataTransfer.items].forEach((item, i) => {
+
+					if( item.kind !== 'file') return;
+
+					const file = item.getAsFile();
+					dropArea.drop(file);
+
+				});
+
+			} else {
+
+				// Use DataTransfer interface to access the file(s)
+				[...e.dataTransfer.files].forEach((file, i) => {
+					dropArea.drop(file);
+				});
+
+			}
+
+		});
+
+	},
+
+	drop: ( file ) => {
+
+		if( ! file.type.startsWith("image/") ) return;
+
+		const container = document.createElement('li');
+
+		const img = document.createElement("img");
+		img.file = file;
+		container.appendChild(img);
+
+		const title = document.createElement('span');
+		title.textContent = file.name;		
+		container.appendChild(title);
+		
+		document.getElementById('gallery').appendChild(container);
+
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			img.src = e.target.result;
+		};
+		reader.readAsDataURL(file);
+
+
+	}
+
+};
+window.addEventListener( 'load', dropArea.setup );

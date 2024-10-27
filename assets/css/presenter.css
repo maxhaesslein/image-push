@@ -1,0 +1,53 @@
+
+:root {
+	--color-grey: #999;
+	--color-highlight: #009;
+}
+
+
+.drop-area {
+	border: 4px dashed var(--color-grey);
+	border-radius: 20px;
+	padding: 40px;
+	text-align: center;
+	color: var(--color-grey);
+}
+
+	.drop-area.active {
+		border-style: solid;
+		border-color: var(--color-highlight);
+		color: var(--color-highlight);
+	}
+
+.gallery {
+	margin: 40px 0;
+	list-style-type: none;
+	padding: 0;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+	.gallery li {
+		display: inline-block;
+		border: 2px solid var(--color-grey);
+		padding: 10px;
+		border-radius: 10px;
+	}
+
+		.gallery img {
+			display: block;
+			margin: 0 auto;
+			height: 200px;
+			width: auto;
+			border-radius: 3px;
+		}
+
+		.gallery span {
+			display: block;
+			font-size: 0.8em;
+			text-align: center;
+			margin-top: 5px;
+		}

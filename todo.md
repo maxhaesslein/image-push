@@ -1,6 +1,6 @@
 
-- [ ] drag&drop images into the presenter
-- [ ] keep all images in a gallery-list
+- [x] drag&drop images into the presenter
+- [x] keep all images in a gallery-list
 - [ ] remove images from gallery
 - [ ] send images from gallery to clients
 - [ ] add version number to js/css files

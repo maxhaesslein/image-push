@@ -6,7 +6,7 @@ work in progress.
 
 cd into the `server/` subfolder
 
-install the dependencies via:
+on the first run, install the dependencies via:
 
 ```bash
 npm install
@@ -20,4 +20,7 @@ node server.js
 
 # Client
 
-first, open the `presenter.html` in a browser, then open the `viewer.html` in one or more browsers.
+- first, open the `presenter.html` in a browser window
+- then open the `viewer.html` in one or more other browsers windows
+- drag&drop images into the `presenter` window
+- click a thumbnail to send this image to all the `viewers`

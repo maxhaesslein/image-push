@@ -1,0 +1,1 @@
+const webSocketAddress = 'ws://localhost:3000';

@@ -1,9 +1,4 @@
 
-
-const webSocketAddress = 'ws://localhost:3000';
-
-
-
 let webSocketConnection = null,
 	peerConnections = {};
 

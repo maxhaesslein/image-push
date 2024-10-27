@@ -1,5 +1,4 @@
 
-const webSocketAddress = 'ws://localhost:3000';
 const viewerId = 'viewer-'+Date.now().toString(36) + Math.random().toString(36).substr(2);
 document.getElementById('viewerIdStatus').textContent = viewerId;
 

@@ -6,8 +6,8 @@
 - [x] remove images from gallery
 - [x] when a new viewer connects, and a picture is selected, automatically transfer it to the new viewer
 - [x] automatically resize images to a max width & height when loading
+- [x] only allow jpg ? or automatically convert to jpg ?
 - [ ] automatically resize images before sending to a resolution thats perfect for the client
-- [ ] only allow jpg ? or automatically convert to jpg ?
 - [ ] add version number to js/css files
 - [ ] define server address and port in a config file
 - [ ] do we want to use ws:// for the address? wss://?

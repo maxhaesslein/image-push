@@ -11,8 +11,8 @@
 
 .gallery {
 	margin: 40px 0;
+	padding: 0 10px;
 	list-style-type: none;
-	padding: 0;
 	display: flex;
 	justify-content: flex-start;
 	align-items: stretch;
@@ -28,12 +28,19 @@
 		.gallery label {
 			display: block;
 			border: 2px solid var(--color-grey);
+			background: var(--color-grey-light);
 			padding: 10px;
 			border-radius: 10px;
 			cursor: pointer;
 			box-sizing: border-box;
 			height: 100%;
+
+			transition: all 200ms ease-in-out;
 		}
+
+			.gallery li:has(button:hover) label {
+				opacity: 0.4;
+			}
 
 			.gallery li.loading label {
 				opacity: 0.4;
@@ -45,11 +52,10 @@
 					display: block;
 					width: calc(100% - 20px);
 					height: calc(100% - 40px);
-					background: var(--color-grey-light);
+					background: var(--color-grey);
 					position: absolute;
 					left: 10px;
 					top: 10px;
-
 				}
 			
 				.gallery li.loading button {
@@ -57,12 +63,13 @@
 				}
 
 			.gallery li label:hover {
-				background: var(--color-grey-light);
+				box-shadow: 0 0 10px rgba(0,0,0,.3);
 			}
 
 			.gallery li:has(input:checked) label {
-				border-color: var(--color-highlight);
-				background: var(--color-grey-light);
+				border-color: var(--color-black);
+				box-shadow: 0 0 20px rgba(0,0,0,.4);
+				background: var(--color-white);
 			}
 
 		.gallery .element-title {

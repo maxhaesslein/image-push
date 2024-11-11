@@ -6,7 +6,8 @@ const peerConnectionsDisplay = document.getElementById('peerConnections');
 
 
 const imageMaxWidth = 1600,
-	imageMaxHeight = 1000;
+	imageMaxHeight = 1000,
+	imageQuality = 0.7;
 
 
 
@@ -392,7 +393,7 @@ var Gallery = {
 				const ctx = canvas.getContext('2d');
 				ctx.drawImage(tmpImg, 0, 0, width, height);
 
-				img.src = canvas.toDataURL();
+				img.src = canvas.toDataURL('image/jpeg', imageQuality);
 
 			};
 		};
@@ -484,17 +485,17 @@ function sendMessage( message, viewerId ) {
 
 function sendMessageToViewer( viewer, message ) {
 
-		dataChannel = viewer.dataChannel;
+	dataChannel = viewer.dataChannel;
 
-		if( ! dataChannel || dataChannel.readyState !== "open" ) return;
+	if( ! dataChannel || dataChannel.readyState !== "open" ) return;
 
-		dataChannel.send(JSON.stringify(message));
+	dataChannel.send(JSON.stringify(message));
 
-		let title = '??';
-		if( message.title ) {
-			title = message.title;
-		}
-		
-		viewer.display.querySelector('.screenDisplay').textContent = 'showing: '+title;
+	let title = '??';
+	if( message.title ) {
+		title = message.title;
+	}
+	
+	viewer.display.querySelector('.screenDisplay').textContent = 'showing: '+title;
 
 }

@@ -11,7 +11,7 @@
 - [ ] add version number to js/css files
 - [ ] define server address and port in a config file
 - [ ] do we want to use ws:// for the address? wss://?
-- [ ] keep images in local storage / session storage ?
+- [ ] keep images in localStorage (limited to 10 MB or something?) or IndexedDB: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
 - [ ] automatically connect to clients when reloading the presenter
 - [ ] automatically reconnect when connection to websocket (or peer) is lost
 - [ ] add some sort of session management with an id that viewers need to enter to connect to the correct presenter

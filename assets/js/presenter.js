@@ -285,7 +285,9 @@ var Gallery = {
 
 		});
 
-		document.getElementById('selected-element-none').addEventListener( 'click', Gallery.updateRemoteImage );
+		var selectedElementNone = document.getElementById('selected-element-none');
+		selectedElementNone.checked = true;
+		selectedElementNone.addEventListener( 'click', Gallery.updateRemoteImage );
 
 	},
 

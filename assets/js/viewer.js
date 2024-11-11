@@ -7,7 +7,33 @@ window.addEventListener( 'load', webSocketSetup );
 
 let webSocketConnection = null,
 	peerConnection = null,
-	dataChannel = null;
+	dataChannel = null,
+	reconnectTimer = null;
+
+function removeImage(){
+	handleMessage('{"type":"clear","title":"- nothing -"}');
+}
+
+function reconnect(){
+
+	removeImage();
+
+	const reconnectTimeout = 2; // in seconds
+
+	if( reconnectTimer ) {
+		clearTimeout(reconnectTimer);
+		reconnectTimer = null;
+	}
+
+	console.log('trying to reconnect in', reconnectTimeout, 'seconds');
+
+	reconnectTimer = setTimeout(() => {
+		console.info('reconnecting ...');
+		// TODO: re-establish all necessary connections
+		startPeerConnection();
+	}, reconnectTimeout*1000 );
+
+}
 
 
 function webSocketSetup(){
@@ -21,6 +47,7 @@ function webSocketSetup(){
 	webSocketConnection.addEventListener( 'error', (event) => {
 		console.warn( 'WebSocket: error connecting to the server' );
 		webSocketStatusDisplay.textContent = 'error';
+		// TOOD: re-establish websocket connection
 	});
 
 	webSocketConnection.addEventListener( 'open', (event) => {
@@ -33,6 +60,7 @@ function webSocketSetup(){
 	webSocketConnection.addEventListener( 'close', (event) => {
 		console.log( 'WebSocket: connection to the server closed' );
 		webSocketStatusDisplay.textContent = 'closed';
+		// TOOD: re-establish websocket connection
 	});
 
 	webSocketConnection.addEventListener( 'message', async (message) => {
@@ -103,16 +131,20 @@ async function peerConnectionSetup(){
 			break;
 			case "disconnected":
 				peerConnectionStatusDisplay.textContent = "disconnected";
+				reconnect();
 			break;
 			case "closed":
 				peerConnectionStatusDisplay.textContent = "closed";
+				reconnect();
 			break;
 			case "failed":
 				peerConnectionStatusDisplay.textContent = "error";
 				console.warn( 'startPeerConnection() - error establishing a peer connection', event );
+				reconnect();
 			break;
 			default:
 				peerConnectionStatusDisplay.textContent = "unknown";
+				reconnect();
 			break;
 		}
 
@@ -130,6 +162,7 @@ async function peerConnectionSetup(){
 
 	peerConnection.addEventListener( 'icecandidateerror', (event) => {
 		console.warn('PeerConnection: icecandidateerror', event);
+		reconnect();
 	});
 
 	peerConnection.addEventListener( 'iceconnectionstatechange', (event) => {
@@ -163,17 +196,26 @@ async function peerConnectionSetup(){
 		remoteDataChannel.addEventListener( 'error', (e) => {
 			console.warn( 'remote data channel error', e.data );
 			dataChannelStatusDisplay.textContent = 'error';
+			reconnect();
 		});
 		remoteDataChannel.addEventListener( 'closing', (e) => {
 			console.log( 'remote data channel closing' );
 			dataChannelStatusDisplay.textContent = 'closing …';
+			reconnect();
 		});
 		remoteDataChannel.addEventListener( 'close', (e) => {
 			console.log( 'remote data channel closed' );
 			dataChannelStatusDisplay.textContent = 'closed';
+			reconnect();
 		});
 
 	});
+
+	startPeerConnection();
+
+}
+
+function startPeerConnection(){
 
 	webSocketConnection.send( JSON.stringify({
 		type: 'new',

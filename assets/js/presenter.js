@@ -363,6 +363,8 @@ var Gallery = {
 		removeButton.addEventListener( 'click', Gallery.removeImage );
 		container.appendChild(removeButton);
 		
+		container.classList.add('loading');
+
 		Gallery.container.insertBefore(container, dropArea);
 
 
@@ -394,6 +396,8 @@ var Gallery = {
 				ctx.drawImage(tmpImg, 0, 0, width, height);
 
 				img.src = canvas.toDataURL('image/jpeg', imageQuality);
+
+				container.classList.remove('loading');
 
 			};
 		};

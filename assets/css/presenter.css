@@ -24,7 +24,7 @@
 		display: inline-block;
 		position: relative;
 	}
-
+	
 		.gallery label {
 			display: block;
 			border: 2px solid var(--color-grey);
@@ -34,6 +34,27 @@
 			box-sizing: border-box;
 			height: 100%;
 		}
+
+			.gallery li.loading label {
+				opacity: 0.4;
+				border-style: dashed;
+			}
+			
+				.gallery li.loading label:after {
+					content: "";
+					display: block;
+					width: calc(100% - 20px);
+					height: calc(100% - 40px);
+					background: var(--color-grey-light);
+					position: absolute;
+					left: 10px;
+					top: 10px;
+
+				}
+			
+				.gallery li.loading button {
+					display: none;
+				}
 
 			.gallery li label:hover {
 				background: var(--color-grey-light);
@@ -86,13 +107,15 @@
 	.gallery li.drop-area {
 		border: 4px dashed var(--color-grey);
 		border-radius: 20px;
-		padding: 40px;
+		padding: 20px;
 		text-align: center;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		color: var(--color-grey);
 		flex-grow: 1;
+		flex-shrink: 1;
+		white-space: break-spaces;
 	}
 
 		.gallery li.drop-area.active {

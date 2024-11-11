@@ -11,5 +11,6 @@
 - [ ] do we want to use ws:// for the address? wss://?
 - [ ] keep images in local storage / session storage ?
 - [ ] automatically connect to clients when reloading the presenter
-- [ ] automatically reconnect when connection to websocket is lost
+- [ ] automatically reconnect when connection to websocket (or peer) is lost
+- [ ] when a new viewer connects, and a picture is selected, automatically transfer it to the new viewer
 - [ ] add some sort of session management with an id that viewers need to enter to connect to the correct presenter

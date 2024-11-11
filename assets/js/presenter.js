@@ -187,6 +187,12 @@ function peerConnectionSetup( viewerId ){
 		console.log('PeerConnection: iceconnectionstatechange', event);
 		console.log('  peerConnection iceConnectionState', peerConnections[viewerId].connection.iceConnectionState);
 		peerConnections[viewerId].display.querySelector('.iceConnectionDisplay').textContent = 'ICEConnection: '+peerConnections[viewerId].connection.iceConnectionState;
+
+		if( peerConnections[viewerId].connection.iceConnectionState == 'connected' ) {
+			// TODO: maybe refresh or re-establish datachannel?
+			// or maybe we only need to create a new offer and send it to the viewer?
+		}
+
 	});
 
 	peerConnections[viewerId].connection.addEventListener( 'icegatheringstatechange', (event) => {
@@ -197,16 +203,40 @@ function peerConnectionSetup( viewerId ){
 		console.warn('PeerConnection: negotiationneeded', event);
 	});
 
-
 	connectToViewer( viewerId );
 
 }
 
 async function connectToViewer( viewerId ){
 
-	// Create the data channel for sending messages
-	const dataChannelStatusDisplay = peerConnections[viewerId].display.querySelector('.dataChannelDisplay');
+	createDataChannel(viewerId);
+
+	const offer = await peerConnections[viewerId].connection.createOffer();
+	await peerConnections[viewerId].connection.setLocalDescription(offer);
+	webSocketConnection.send(JSON.stringify({
+		viewerId: viewerId,
+		type: 'offer',
+		offer: offer
+	}));
+
+}
+
+function createDataChannel( viewerId ) {
+
+	if( ! peerConnections[viewerId] ) {
+		console.warn('cannot create data channel, viewerId not found', viewerId);
+		return;
+	}
+
+	if( peerConnections[viewerId].dataChannel ) {
+		console.warn('data channel exists for', viewerId, 'closing …');
+		return;
+	}
+
 	peerConnections[viewerId].dataChannel = peerConnections[viewerId].connection.createDataChannel( 'image-push' );
+
+	const dataChannelStatusDisplay = peerConnections[viewerId].display.querySelector('.dataChannelDisplay');
+
 	peerConnections[viewerId].dataChannel.addEventListener( 'open', (event) => {
 		console.log( 'local data channel open' );
 		dataChannelStatusDisplay.textContent = 'DataChannel: opened';
@@ -227,14 +257,6 @@ async function connectToViewer( viewerId ){
 		console.log('local data channel closed');
 		dataChannelStatusDisplay.textContent = 'DataChannel: closed';
 	});
-
-	const offer = await peerConnections[viewerId].connection.createOffer();
-	await peerConnections[viewerId].connection.setLocalDescription(offer);
-	webSocketConnection.send(JSON.stringify({
-		viewerId: viewerId,
-		type: 'offer',
-		offer: offer
-	}));
 
 }
 

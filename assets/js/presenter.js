@@ -241,7 +241,7 @@ var dropArea = {
 
 		if( ! area ) return;
 
-		area.addEventListener( 'dragover', (e) => {
+		window.addEventListener( 'dragover', (e) => {
 			area.classList.add('active');
 			e.preventDefault();
 		});
@@ -252,7 +252,7 @@ var dropArea = {
 			area.classList.remove('active');
 		});
 
-		area.addEventListener( 'drop', (e) => {
+		window.addEventListener( 'drop', (e) => {
 			
 			e.preventDefault();
 

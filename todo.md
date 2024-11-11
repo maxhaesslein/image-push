@@ -2,6 +2,7 @@
 - [x] drag&drop images into the presenter
 - [x] keep all images in a gallery-list
 - [x] send images from gallery to clients
+- [x] presenter: use window for dropzone
 - [ ] remove images from gallery
 - [ ] automatically resize images before sending to a resolution thats perfect for the client
 - [ ] only allow jpg ? or automatically convert to jpg ?

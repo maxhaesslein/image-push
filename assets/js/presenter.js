@@ -5,6 +5,10 @@ let webSocketConnection = null,
 const peerConnectionsDisplay = document.getElementById('peerConnections');
 
 
+const imageMaxWidth = 1600,
+	imageMaxHeight = 1000;
+
+
 
 window.addEventListener( 'load', webSocketSetup );
 
@@ -363,7 +367,34 @@ var Gallery = {
 
 		const reader = new FileReader();
 		reader.onload = (e) => {
-			img.src = e.target.result;
+
+			const tmpImg = new Image();
+			tmpImg.src = e.target.result;
+
+			tmpImg.onload = () => {
+
+				const canvas = document.createElement('canvas');
+
+				let width = tmpImg.width;
+				if( width > imageMaxWidth ) {
+					width = imageMaxWidth;
+				}
+				let height = width * tmpImg.height/tmpImg.width;
+
+				if( height > imageMaxHeight ) {
+					height = imageMaxHeight;
+					width = imageMaxHeight * tmpImg.width/tmpImg.height;
+				}
+
+				canvas.width = width;
+				canvas.height = height;
+
+				const ctx = canvas.getContext('2d');
+				ctx.drawImage(tmpImg, 0, 0, width, height);
+
+				img.src = canvas.toDataURL();
+
+			};
 		};
 		reader.readAsDataURL(file);
 

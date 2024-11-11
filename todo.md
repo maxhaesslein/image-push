@@ -5,6 +5,7 @@
 - [x] presenter: use window for dropzone
 - [x] remove images from gallery
 - [x] when a new viewer connects, and a picture is selected, automatically transfer it to the new viewer
+- [x] automatically resize images to a max width & height when loading
 - [ ] automatically resize images before sending to a resolution thats perfect for the client
 - [ ] only allow jpg ? or automatically convert to jpg ?
 - [ ] add version number to js/css files

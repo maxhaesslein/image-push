@@ -4,6 +4,7 @@
 - [x] send images from gallery to clients
 - [x] presenter: use window for dropzone
 - [x] remove images from gallery
+- [x] when a new viewer connects, and a picture is selected, automatically transfer it to the new viewer
 - [ ] automatically resize images before sending to a resolution thats perfect for the client
 - [ ] only allow jpg ? or automatically convert to jpg ?
 - [ ] add version number to js/css files
@@ -12,5 +13,4 @@
 - [ ] keep images in local storage / session storage ?
 - [ ] automatically connect to clients when reloading the presenter
 - [ ] automatically reconnect when connection to websocket (or peer) is lost
-- [ ] when a new viewer connects, and a picture is selected, automatically transfer it to the new viewer
 - [ ] add some sort of session management with an id that viewers need to enter to connect to the correct presenter

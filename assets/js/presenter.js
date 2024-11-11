@@ -132,7 +132,7 @@ function removePeerConnection( viewerId ) {
 }
 
 
-async function peerConnectionSetup( viewerId ){
+function peerConnectionSetup( viewerId ){
 
 	console.info( 'PeerConnection setup' );
 
@@ -198,12 +198,19 @@ async function peerConnectionSetup( viewerId ){
 	});
 
 
+	connectToViewer( viewerId );
+
+}
+
+async function connectToViewer( viewerId ){
+
 	// Create the data channel for sending messages
 	const dataChannelStatusDisplay = peerConnections[viewerId].display.querySelector('.dataChannelDisplay');
 	peerConnections[viewerId].dataChannel = peerConnections[viewerId].connection.createDataChannel( 'image-push' );
 	peerConnections[viewerId].dataChannel.addEventListener( 'open', (event) => {
 		console.log( 'local data channel open' );
 		dataChannelStatusDisplay.textContent = 'DataChannel: opened';
+		Gallery.updateRemoteImage( false, viewerId );
 	});
 	peerConnections[viewerId].dataChannel.addEventListener( 'message', (event) => {
 		console.log( 'local data channel received message:', event.data );
@@ -362,7 +369,7 @@ var Gallery = {
 
 	},
 
-	updateRemoteImage: (e) => {
+	updateRemoteImage: ( e, viewerId ) => {
 
 		const activeRadioElement = Gallery.container.querySelector('input[type="radio"]:checked');
 
@@ -390,7 +397,7 @@ var Gallery = {
 			id: imageId,
 			title: title,
 			data: image.src
-		});
+		}, viewerId );
 
 	}
 
@@ -398,15 +405,35 @@ var Gallery = {
 window.addEventListener( 'load', Gallery.setup );
 
 
-function sendMessage( message ) {
+function sendMessage( message, viewerId ) {
 
-	for( const [viewerId, viewer] of Object.entries(peerConnections) ) {
+	if( viewerId ) {
+
+		const viewer = peerConnections[viewerId];
+
+		if( ! viewer ) {
+			console.warn('cannot send message, viewerId not found', viewerId, message)
+		}
 
 		console.log('sending message to', viewerId);
+		sendMessageToViewer( viewer, message );
+
+	} else {
+
+		for( const [viewerId, viewer] of Object.entries(peerConnections) ) {
+			console.log('sending message to', viewerId);
+			sendMessageToViewer( viewer, message );
+		}
+
+	}
+
+}
+
+function sendMessageToViewer( viewer, message ) {
 
 		dataChannel = viewer.dataChannel;
 
-		if( ! dataChannel || dataChannel.readyState !== "open" ) continue;
+		if( ! dataChannel || dataChannel.readyState !== "open" ) return;
 
 		dataChannel.send(JSON.stringify(message));
 
@@ -417,7 +444,4 @@ function sendMessage( message ) {
 		
 		viewer.display.querySelector('.screenDisplay').textContent = 'showing: '+title;
 
-	}
-
 }
-

@@ -2,17 +2,32 @@ Drag images into a browser window to view them remotely
 
 work in progress.
 
-# Server
+# Setup
 
-cd into the `server/` subfolder
+create a new file called `options.js` in the root-directory of this project with the following content:
 
-on the first run, install the dependencies via:
+```js
+
+const Options = {
+	port: 3000,
+	host: 'ws://localhost',
+};
+
+if( typeof module !== 'undefined' ) module.exports = Options;
+
+```
+
+update port and address as needed.
+
+cd into the `server/` subfolder and install the dependencies via:
 
 ```bash
 npm install
 ```
 
-then start the server via:
+# Server
+
+cd into the `server/` subfolder, then start the server via:
 
 ```bash
 node server.js

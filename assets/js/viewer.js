@@ -3,6 +3,12 @@ const viewerId = 'viewer-'+Date.now().toString(36) + Math.random().toString(36).
 document.getElementById('viewerIdStatus').textContent = viewerId;
 
 
+let webSocketAddress = 'ws://localhost:3000'; // fallback
+if( Options ) {
+	webSocketAddress = Options['host']+':'+Options['port'];
+}
+
+
 window.addEventListener( 'load', webSocketSetup );
 
 let webSocketConnection = null,

@@ -5,6 +5,13 @@ let webSocketConnection = null,
 const peerConnectionsDisplay = document.getElementById('peerConnections');
 
 
+let webSocketAddress = 'ws://localhost:3000'; // fallback
+if( Options ) {
+	webSocketAddress = Options['host']+':'+Options['port'];
+}
+
+
+
 const imageMaxWidth = 1600,
 	imageMaxHeight = 1000,
 	imageQuality = 0.7;

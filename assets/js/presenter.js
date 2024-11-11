@@ -293,6 +293,9 @@ var Gallery = {
 
 		if( ! file.type.startsWith("image/") ) return;
 
+		const dropArea = document.getElementById('drop-area');
+		dropArea.classList.remove('active');
+
 		const container = document.createElement('li');
 
 		const id = 'image-'+Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -319,11 +322,12 @@ var Gallery = {
 
 		const removeButton = document.createElement('button');
 		removeButton.textContent = 'remove';
+		removeButton.classList.add('remove-button');
 		removeButton.dataset.id = id;
 		removeButton.addEventListener( 'click', Gallery.removeImage );
 		container.appendChild(removeButton);
 		
-		Gallery.container.appendChild(container);
+		Gallery.container.insertBefore(container, dropArea);
 
 
 		const reader = new FileReader();

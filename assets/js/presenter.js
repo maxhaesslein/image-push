@@ -233,9 +233,15 @@ async function peerConnectionSetup( viewerId ){
 
 
 
-var dropArea = {
+var Gallery = {
+
+	container: false,
 
 	setup: () => {
+
+		Gallery.container = document.getElementById('gallery');
+
+		if( ! Gallery.container ) return;
 
 		const area = document.getElementById('drop-area');
 
@@ -264,7 +270,7 @@ var dropArea = {
 					if( item.kind !== 'file') return;
 
 					const file = item.getAsFile();
-					dropArea.drop(file);
+					Gallery.drop(file);
 
 				});
 
@@ -272,14 +278,14 @@ var dropArea = {
 
 				// Use DataTransfer interface to access the file(s)
 				[...e.dataTransfer.files].forEach((file, i) => {
-					dropArea.drop(file);
+					Gallery.drop(file);
 				});
 
 			}
 
 		});
 
-		document.getElementById('gallery').querySelector('li.no-image').addEventListener( 'click', dropArea.send );
+		document.getElementById('selected-element-none').addEventListener( 'click', Gallery.updateRemoteImage );
 
 	},
 
@@ -292,17 +298,32 @@ var dropArea = {
 		const id = 'image-'+Date.now().toString(36) + Math.random().toString(36).substr(2);
 		container.id = id;
 
+		const label = document.createElement('label');
+
 		const img = document.createElement("img");
 		img.file = file;
-		container.appendChild(img);
+		label.appendChild(img);
 
 		const title = document.createElement('span');
+		title.classList.add('element-title');
 		title.textContent = file.name;		
-		container.appendChild(title);
+		label.appendChild(title);
+		const viewButton = document.createElement('input');
+		viewButton.type = 'radio';
+		viewButton.name = 'selected-element';
+		viewButton.value = id;
+		viewButton.addEventListener( 'click', Gallery.updateRemoteImage );
+		label.appendChild(viewButton);
+
+		container.appendChild(label);		
+
+		const removeButton = document.createElement('button');
+		removeButton.textContent = 'remove';
+		removeButton.dataset.id = id;
+		removeButton.addEventListener( 'click', Gallery.removeImage );
+		container.appendChild(removeButton);
 		
-		container.addEventListener( 'click', dropArea.send );
-		
-		document.getElementById('gallery').appendChild(container);
+		Gallery.container.appendChild(container);
 
 
 		const reader = new FileReader();
@@ -314,21 +335,36 @@ var dropArea = {
 
 	},
 
-	send: (e) => {
+	removeImage: (e) => {
 
-		const item = e.target.closest('li');
+		const button = e.target,
+			id = button.dataset.id;
 
-		if( ! item ) return;
+		const element = Gallery.container.querySelector('#'+id);
 
-		const gallery = document.getElementById('gallery');
-
-		for( const active of gallery.querySelectorAll('li.active') ) {
-			active.classList.remove('active');
+		if( ! element ) {
+			console.warn('cannot remove element from gallery, element not found', id);
+			return;
 		}
 
-		item.classList.add('active');
+		if( element.querySelector('input[type="radio"]:checked') ) {
+			document.getElementById('selected-element-none').checked = true;
+			Gallery.updateRemoteImage();
+		}
 
-		if( item.id == 'no-image' ) {
+		element.remove();
+
+	},
+
+	updateRemoteImage: (e) => {
+
+		const activeRadioElement = Gallery.container.querySelector('input[type="radio"]:checked');
+
+		if( ! activeRadioElement ) return;
+
+		const value = activeRadioElement.value;
+
+		if( value == 'no-image' ) {
 			sendMessage({
 				type: 'clear',
 				title: '- nothing -'
@@ -336,9 +372,12 @@ var dropArea = {
 			return;
 		}
 
-		const imageId = item.id;
+		var item = activeRadioElement.closest('label');
+
+		const imageId = value;
+
 		const image = item.querySelector('img');
-		const title = item.querySelector('span').textContent;
+		const title = item.querySelector('span.element-title').textContent;
 
 		sendMessage({
 			type: 'image',
@@ -350,7 +389,7 @@ var dropArea = {
 	}
 
 };
-window.addEventListener( 'load', dropArea.setup );
+window.addEventListener( 'load', Gallery.setup );
 
 
 function sendMessage( message ) {

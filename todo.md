@@ -7,10 +7,9 @@
 - [x] when a new viewer connects, and a picture is selected, automatically transfer it to the new viewer
 - [x] automatically resize images to a max width & height when loading
 - [x] only allow jpg ? or automatically convert to jpg ?
+- [x] define server address and port in a config file
 - [ ] automatically resize images before sending to a resolution thats perfect for the client
 - [ ] add version number to js/css files
-- [ ] define server address and port in a config file
-- [ ] do we want to use ws:// for the address? wss://?
 - [ ] keep images in localStorage (limited to 10 MB or something?) or IndexedDB: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
 - [ ] automatically connect to clients when reloading the presenter
 - [ ] automatically reconnect when connection to websocket (or peer) is lost
